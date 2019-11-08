@@ -214,7 +214,7 @@ namespace NMG.Core.ByCode
             return builder.ToString();
         }
         
-        public string Reference(ForeignKey fk, ITextFormatter formatter)
+        public string Reference(ForeignKey fk, ITextFormatter formatter, bool nameFkAsForeignTable)
         {
             var builder = new StringBuilder();
             if (fk.Columns.Count() == 1)
@@ -232,7 +232,8 @@ namespace NMG.Core.ByCode
                     mapList.Add("map.NotNullable(true)");
                 }
                 mapList.Add("map.Cascade(Cascade.None)");
-                builder.AppendLine(FormatCode("\t\t\tManyToOne",formatter.FormatSingular(fk.UniquePropertyName),mapList));
+                var propertyName = nameFkAsForeignTable ? fk.UniquePropertyName : fk.Columns.First().Name;
+                builder.AppendLine(FormatCode("\t\t\tManyToOne",formatter.FormatSingular(propertyName),mapList));
             }
             else
             {

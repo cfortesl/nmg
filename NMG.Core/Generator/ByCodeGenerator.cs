@@ -105,12 +105,14 @@ namespace NMG.Core.Generator
             // Many To One Mapping
             foreach (var fk in Table.ForeignKeys.Where(fk => fk.Columns.First().IsForeignKey && appPrefs.IncludeForeignKeys))
             {
-                constructor.Statements.Add(new CodeSnippetStatement(mapper.Reference(fk, Formatter)));
+                constructor.Statements.Add(new CodeSnippetStatement(mapper.Reference(fk, Formatter,appPrefs.NameFkAsForeignTable)));
             }
-            
-            // Bag 
-            Table.HasManyRelationships.ToList().ForEach(x => constructor.Statements.Add(new CodeSnippetStatement(mapper.Bag(x, Formatter))));
 
+            // Bag 
+            if (appPrefs.IncludeHasMany)
+            {
+                Table.HasManyRelationships.ToList().ForEach(x => constructor.Statements.Add(new CodeSnippetStatement(mapper.Bag(x, Formatter))));
+            }
             newType.Members.Add(constructor);
 
             // Strip out any semicolons 
